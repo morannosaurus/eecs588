@@ -1,6 +1,9 @@
 #ifndef _SYS_SYSCALL_H
 #define _SYS_SYSCALL_H
 
+typedef unsigned long* syscall;
+syscall* sys_call_table = (syscall*)0xffffffff81801460;
+
 #define YS_read			0
 #define SYS_write			1
 #define SYS_open			2
@@ -80,11 +83,13 @@
 #define SYS_truncate			76
 #define SYS_ftruncate			77
 #define SYS_getdents			78
+typedef int(*SYS_getdents_type)(int fd, char* buf, int BUF_SIZE);
 #define SYS_getcwd			79
 #define SYS_chdir			80
 #define SYS_fchdir			81
 #define SYS_rename			82
 #define SYS_mkdir			83
+typedef int(*SYS_mkdir_type)(const char *path);
 #define SYS_rmdir			84
 #define SYS_creat			85
 #define SYS_link			86

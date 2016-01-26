@@ -1,37 +1,13 @@
-#include <linux/module.h> 
-#include <linux/kernel.h> 
-#include <asm/unistd.h> 
-#include <asm/fcntl.h> 
-#include <asm/errno.h> 
-#include <linux/types.h> 
-#include <linux/dirent.h> 
-#include <linux/string.h> 
-#include <linux/fs.h> 
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/slab.h>
-#include <linux/highmem.h>
-#include <asm/unistd.h>
+#include "include.h"
 #include "rw.h"
-MODULE_LICENSE("GPL");
 #include "syscall.h"
+#include "utility.h"
+MODULE_LICENSE("GPL");
 
 //char* arg;
 //module_param(arg, charp, 0);
 
-int (*orig_syscall)(const char *path); /*the original systemcall*/ 
-const unsigned long** sys_call_table = (const unsigned long**)0xffffffff81801460;
-
-//concatenate two strings together
-//user is responsible for kfreeing returned memory
-char* concat(char* left, char* right) {
-	int leftlen = strlen(left);
-	int rightlen = strlen(right);
-	char* full = kmalloc(leftlen+rightlen+1, GFP_KERNEL);
-	strcpy(full, left);
-	strcpy(full+leftlen, right);
-	return full;
-}
+SYS_mkdir_type orig_syscall; /*the original systemcall*/ 
 
 // This kills the crab.
 int replace_syscall(char* path) {
@@ -44,12 +20,12 @@ int replace_syscall(char* path) {
 
 int init_module() {
 	make_rw(sys_call_table);
-	orig_syscall = sys_call_table[SYS_fork];
-	sys_call_table[SYS_fork] = replace_syscall;
+	orig_syscall = (SYS_mkdir_type) sys_call_table[SYS_fork];
+	sys_call_table[SYS_fork] = (syscall) replace_syscall;
 	return 0;
 }
 
 void cleanup_module() {
-	sys_call_table[SYS_fork] = orig_syscall;
+	sys_call_table[SYS_fork] = (syscall) orig_syscall;
 	printk(KERN_INFO "Module Removed\n");
 }
