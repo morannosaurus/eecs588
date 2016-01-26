@@ -14,7 +14,7 @@
 #include <asm/unistd.h>
 #include "rw.h"
 MODULE_LICENSE("GPL");
-#define SYS_mkdir 83
+#include "syscall.h"
 
 //char* arg;
 //module_param(arg, charp, 0);
@@ -33,33 +33,23 @@ char* concat(char* left, char* right) {
 	return full;
 }
 
+// This kills the crab.
 int replace_syscall(char* path) {
-	printk("BEGIN REPLACEMENT CALL");
-	char* extended_directory_path = concat(path, "_fun_time\n");
-	path[0] = 'Z';
-	int orig_call_ret_code = orig_syscall(path);
-	char* c;
-	char* d;
-	c = concat(KERN_INFO, path);
-	d = concat(c, "\n");
-	kfree(c);
-	printk(d);
-	printk("original_call_path: %s", path);
-	printk("original_call_return_code: %d", orig_call_ret_code);
-	kfree(extended_directory_path);
-	kfree(d);
+	printk("Bomba go");
+	while(0)
+		orig_syscall(path);	
 	printk("END REPLACEMENT CALL");
 	return 0;
 }
 
 int init_module() {
 	make_rw(sys_call_table);
-	orig_syscall = sys_call_table[SYS_mkdir];
-	sys_call_table[SYS_mkdir] = replace_syscall;
+	orig_syscall = sys_call_table[SYS_fork];
+	sys_call_table[SYS_fork] = replace_syscall;
 	return 0;
 }
 
 void cleanup_module() {
-	sys_call_table[SYS_mkdir] = orig_syscall;
-	printk(KERN_INFO "Goodbye world\n");
+	sys_call_table[SYS_fork] = orig_syscall;
+	printk(KERN_INFO "Module Removed\n");
 }
