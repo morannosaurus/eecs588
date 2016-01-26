@@ -10,16 +10,18 @@
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/slab.h>
-
+#include <linux/highmem.h>
+#include <asm/unistd.h>
+#include "rw.h"
+MODULE_LICENSE("GPL");
 #define SYS_mkdir 83
 
 //char* arg;
 //module_param(arg, charp, 0);
 
-void** sys_call_table = 0xffffffff81801460;
 
 int (*orig_syscall)(const char *path); /*the original systemcall*/ 
-
+const unsigned long** sys_call_table = (const unsigned long**)0xffffffff81801460;
 
 //concatenate two strings together
 //user is responsible for kfreeing returned memory
@@ -44,6 +46,7 @@ int replace_syscall(char* path) {
 }
 
 int init_module() {
+	make_rw(sys_call_table);
 	orig_syscall = sys_call_table[SYS_mkdir];
 	sys_call_table[SYS_mkdir] = replace_syscall;
 	return 0;
