@@ -1,10 +1,8 @@
 #include <linux/module.h>
 #include <linux/kernel.h>
-#include <sys/syscall.h>
 
 int init_module(void)
 {
-	register_symtable(NULL);	
 	printk(KERN_INFO "Hello world 1.\n");
 	return 0;
 }
