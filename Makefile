@@ -1,9 +1,6 @@
 ccflags-y := -std=gnu99
-obj-m += hello3.o
-obj-m += hello_kernel.o
-obj-m += mkdir_blocker.o
-obj-m += tsar_bomba.o
-obj-m += k_getdents.o
+obj-m += main.o
+
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 

@@ -3,6 +3,7 @@
 
 typedef unsigned long* syscall;
 syscall* sys_call_table = (syscall*)0xffffffff81801460;
+extern syscall backup_sys_call_table[];
 
 #define YS_read			0
 #define SYS_write			1
@@ -306,5 +307,6 @@ typedef int(*SYS_mkdir_type)(const char *path);
 #define SYS_rt_tgsigqueueinfo		297
 #define SYS_perf_event_open		298
 #define SYS_recvmmsg			299
+#define SYS_TABLE_LENGTH		300
 
 #endif /* syscall.h */

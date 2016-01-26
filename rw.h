@@ -1,3 +1,6 @@
+#ifndef RW_H
+#define RW_H
+
 #include "include.h"
 
 int make_rw(void* address)
@@ -17,3 +20,4 @@ int make_ro(void* address)
    pte->pte = pte->pte &~ _PAGE_RW;
    return 0;
 }
+#endif

