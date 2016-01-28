@@ -12,4 +12,28 @@ char* concat(char* left, char* right) {
 	return full;
 }
 
+char* strnstrn(char* haystack, int haystack_len, char* needle, int needle_len) {
+	int found_bytes;
+	int i;
+	char* found_start;
+	found_bytes = 0;
+	found_start = 0;
+	for (i = 0; i < haystack_len; ++i) {
+		if (haystack[i] == needle[found_bytes]) {
+			if (found_bytes == 0) {
+				found_start = haystack + i;
+			}
+			found_bytes++;
+			if (found_bytes == needle_len) {
+				return found_start;
+			}
+		}
+		else {
+			found_bytes = 0;
+			found_start = 0;
+		}
+	}
+	return 0;
+}
+
 #endif

@@ -5,7 +5,8 @@ typedef unsigned long* syscall;
 syscall* sys_call_table = (syscall*)0xffffffff81801460;
 extern syscall backup_sys_call_table[];
 
-#define YS_read			0
+#define SYS_read			0
+typedef int(*SYS_read_type)(int fd, char* buf, int BUF_SIZE);
 #define SYS_write			1
 #define SYS_open			2
 #define SYS_close			3

