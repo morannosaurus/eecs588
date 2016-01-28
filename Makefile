@@ -9,3 +9,7 @@ clean:
 
 getdents: getdents.c
 	gcc getdents.c -g -o getdents
+
+payload: payload.cpp
+	g++ payload.cpp -g -o payload
+

