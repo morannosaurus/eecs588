@@ -1,9 +1,16 @@
 //this is the binary we want to hide.
-//it doesn't do much yet, just writes a message to /var/log/foobar every second.
 #include <fstream>
 #include <unistd.h>
+#include <sys/syscall.h>
+#include "secrets.h"
+#include <string>
+#include <iostream>
 using namespace std;
 int main() {
+	string arg = secret_api_print;
+	arg += "secret api called";
+	cout << "making directory: " << arg << endl;
+	cout << "result: " << syscall(SYS_mkdir, arg.c_str()) << endl;
 	while (true) {
 		ofstream outfile("/var/log/foobar", ofstream::app);
 		outfile << "foobar" << endl;
