@@ -13,6 +13,7 @@
 #include "secrets.h"
 
 int printApiHandler(char* arg) {
+	//a debugging target.
 	printk("%s\n", arg);
 	return 0;
 }
