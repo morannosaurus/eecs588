@@ -1,4 +1,6 @@
-# Warning: once you run this script and reboot, it will be very difficult to uninstall the kernel module.
+# Installs the kernel module, and starts it on reboot.
+# Can be undone with undeploy.sh
+# This script must be run as root
 
 export SECRET_KO_NAME=$(cat secret_ko_name)
 export SECRET_PAYLOAD_NAME=$(cat secret_payload_name)
