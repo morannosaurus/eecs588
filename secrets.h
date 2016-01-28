@@ -7,4 +7,5 @@ char* secret_payload_name = "CAdxPKWBRWAEbvzUzBtM";
 char* secret_payload_name_full = "/usr/bin/CAdxPKWBRWAEbvzUzBtM";
 
 char* secret_api_print = "VYoXBSfQXuYfWhHVrCRU";
+char* secret_api_deactivate = "KApazcsgjSSpyTTjINKu";
 #endif

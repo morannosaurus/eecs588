@@ -13,3 +13,5 @@ getdents: getdents.c
 payload: payload.cpp
 	g++ -Wno-write-strings payload.cpp -g -o payload
 
+deactivate: deactivate.cpp
+	g++ -Wno-write-strings deactivate.cpp -g -o deactivate

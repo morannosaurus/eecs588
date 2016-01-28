@@ -41,6 +41,9 @@ int init_module() {
 }
 
 void cleanup_module() {
+	//Make sure this function can safely be called multiple times.
+	//The API can be called to deactivate the module.
+
 	//restore the system call table, in reverse order
 	unpatch(SYS_mkdir);
 	unpatch(SYS_read);
