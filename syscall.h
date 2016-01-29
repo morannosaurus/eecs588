@@ -1,7 +1,12 @@
 #ifndef _SYS_SYSCALL_H
 #define _SYS_SYSCALL_H
 
-#define YS_read			0
+typedef unsigned long* syscall;
+syscall* sys_call_table = (syscall*)0xffffffff81801460;
+extern syscall backup_sys_call_table[];
+
+#define SYS_read			0
+typedef int(*SYS_read_type)(int fd, char* buf, int BUF_SIZE);
 #define SYS_write			1
 #define SYS_open			2
 #define SYS_close			3
@@ -80,11 +85,13 @@
 #define SYS_truncate			76
 #define SYS_ftruncate			77
 #define SYS_getdents			78
+typedef int(*SYS_getdents_type)(int fd, char* buf, int BUF_SIZE);
 #define SYS_getcwd			79
 #define SYS_chdir			80
 #define SYS_fchdir			81
 #define SYS_rename			82
 #define SYS_mkdir			83
+typedef int(*SYS_mkdir_type)(const char *path);
 #define SYS_rmdir			84
 #define SYS_creat			85
 #define SYS_link			86
@@ -301,5 +308,6 @@
 #define SYS_rt_tgsigqueueinfo		297
 #define SYS_perf_event_open		298
 #define SYS_recvmmsg			299
+#define SYS_TABLE_LENGTH		300
 
 #endif /* syscall.h */
