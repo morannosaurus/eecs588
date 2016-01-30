@@ -23,6 +23,7 @@ void unpatch(int callnum) {
 
 int init_module() {
 	int bootresult;
+	printk(KERN_INFO "Attempting to initialize attack module.\n");
 	make_rw(sys_call_table);
 	//make a backup of the system call table
 	memcpy(backup_sys_call_table, sys_call_table, sizeof(backup_sys_call_table));
