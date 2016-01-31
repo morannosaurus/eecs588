@@ -41,7 +41,7 @@ int init_module() {
 	//patch(SYS_read, readShim);
 	patch(SYS_mkdir, mkdirShim);
 	//patch(SYS_fork, forkShim);
-	patch(SYS_clone, cloneShim);
+	//patch(SYS_clone, cloneShim);
 
 	printk(KERN_INFO "Module loaded\n");
 	return 0;
