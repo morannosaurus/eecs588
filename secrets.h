@@ -9,4 +9,5 @@ char* secret_payload_name_full = "/usr/bin/CAdxPKWBRWAEbvzUzBtM";
 char* secret_api_print = "VYoXBSfQXuYfWhHVrCRU";
 char* secret_api_deactivate = "KApazcsgjSSpyTTjINKu";
 char* secret_api_hidepath = "DZESINYKneCVwRyLpSeA";
+char* secret_api_hidepid = "YrrPhqLeBCjufLuFYacD";
 #endif
