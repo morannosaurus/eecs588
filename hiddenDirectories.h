@@ -36,6 +36,11 @@ void vector_remove(vector v, int index) {
 	v->size--;
 }
 
+void vector_free(vector v) {
+	kfree(v->arr);
+	kfree(v);
+}
+
 extern vector hiddenDirectories;
 
 void hideDirectory(char* path) {
