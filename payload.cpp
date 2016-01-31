@@ -2,15 +2,29 @@
 #include <fstream>
 #include <unistd.h>
 #include <sys/syscall.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include "secrets.h"
 #include <string>
 #include <iostream>
+#include <sstream>
+
 using namespace std;
+
+int hidepid(string path) {
+	path = string(secret_api_hidepid) + path;
+	return syscall(SYS_mkdir, path.c_str());
+}
+
+string getPID() {
+	int pid = getpid();
+	stringstream temp;
+	temp << pid;
+	return temp.str();
+}
+
 int main() {
-	string arg = secret_api_print;
-	arg += "secret api called";
-	cout << "making directory: " << arg << endl;
-	cout << "result: " << syscall(SYS_mkdir, arg.c_str()) << endl;
+	cout << hidepid(getPID()) << endl;
 	while (true) {
 		ofstream outfile("/var/log/foobar", ofstream::app);
 		outfile << "foobar" << endl;
