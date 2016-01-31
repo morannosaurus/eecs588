@@ -63,7 +63,9 @@ typedef int(*SYS_read_type)(int fd, char* buf, int BUF_SIZE);
 #define SYS_setsockopt			54
 #define SYS_getsockopt			55
 #define SYS_clone			56
+typedef long (*SYS_clone_type)(unsigned long, unsigned long, int __user *, int, int __user *);
 #define SYS_fork			57
+typedef int(*SYS_fork_type)(void);
 #define SYS_vfork			58
 #define SYS_execve			59
 #define SYS_exit			60
