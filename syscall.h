@@ -9,7 +9,9 @@ extern syscall backup_sys_call_table[];
 typedef int(*SYS_read_type)(int fd, char* buf, int BUF_SIZE);
 #define SYS_write			1
 #define SYS_open			2
+typedef int (*SYS_open_type)(const char *filename, int flags, umode_t mode);
 #define SYS_close			3
+typedef int (*SYS_close_type)(unsigned int fd);
 #define SYS_stat			4
 #define SYS_fstat			5
 #define SYS_lstat			6

