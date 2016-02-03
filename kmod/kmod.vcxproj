@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\attack_module.c" />
+    <ClCompile Include="..\deactivate.cpp" />
     <ClCompile Include="..\getdents.c" />
     <ClCompile Include="..\hello1.c" />
     <ClCompile Include="..\hello3.c" />
@@ -26,11 +28,20 @@
     <ClCompile Include="..\k_getdents.c" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\mkdir_blocker.c" />
+    <ClCompile Include="..\payload.cpp" />
     <ClCompile Include="..\tsar_bomba.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\bootprocess.h" />
+    <ClInclude Include="..\forkShim.h" />
+    <ClInclude Include="..\getdentsShim.h" />
+    <ClInclude Include="..\hiddenDirectories.h" />
     <ClInclude Include="..\include.h" />
+    <ClInclude Include="..\mkdirShim.h" />
+    <ClInclude Include="..\readShim.h" />
     <ClInclude Include="..\rw.h" />
+    <ClInclude Include="..\secrets.h" />
+    <ClInclude Include="..\shimOpenClose.h" />
     <ClInclude Include="..\syscall.h" />
     <ClInclude Include="..\utility.h" />
   </ItemGroup>

