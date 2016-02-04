@@ -1,0 +1,3 @@
+# A Toy Rootkit #
+
+This repository contains the code for an Ubuntu loadable kernel module. This module can be used to hide processes, files, and directories from userland processes. This was created as a project in EECS 588 (Computer Security) at the University of Michigan. Steps have been taken to make this module difficult to use in a real attack - for example, this is likely to work *only* on the particular kernel we targeted (Ubuntu 14.04 LTS), and it doesn't hide any network activity, making it less useful for most malicious programs.
