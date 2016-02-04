@@ -8,3 +8,5 @@ To activate the rootkit, run the following commands:
 Then, reboot the machine. You'll see that `/var/log/foobar` is having `foobar` appended to it once a second, but the process performing this action will be invisible.
 
 To deactivate the rootkit, run `./deactivate`. To remove the rootkit, run `sudo ./undeploy.sh`.
+
+The presentation can be found at https://github.com/IanPudney/eecs588/raw/master/588_attack_presentation.pdf.
